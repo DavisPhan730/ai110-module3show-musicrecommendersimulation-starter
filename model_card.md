@@ -1,111 +1,61 @@
 # 🎧 Model Card: Music Recommender Simulation
 
-## 1. Model Name  
+## 1. Model Name
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
-
----
-
-## 2. Intended Use  
-
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+**VibeFinder: Music Recommender Simulation**
 
 ---
 
-## 3. How the Model Works  
+## 2. Intended Use
 
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+This recommender suggests songs from a small catalog using a user's music preferences. It is designed for classroom exploration, not as a complete music service. It assumes that the selected preferences and song details describe what the user likes.
 
 ---
 
-## 4. Data  
+## 3. How the Model Works
 
-Describe the dataset the model uses.  
+The system uses **content-based filtering**. It compares each song's features with a user's preferences and gives the song a score out of 7:
 
-Prompts:  
+- Genre match: up to 2 points for an exact match.
+- Mood match: up to 1 point for an exact match.
+- Energy similarity: up to 2 points. Songs with energy closer to the user's target receive more points.
+- Valence similarity: up to 1 point. Songs with valence closer to the user's target receive more points.
+- Tempo similarity: up to 1 point. Songs closer to the user's target tempo receive more points, using a 60 BPM tolerance.
 
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
-
----
-
-## 5. Strengths  
-
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The system sorts songs from highest score to lowest and returns the top three by default. The program can request a different number with `k`; for example, the current command-line example requests five recommendations.
 
 ---
 
-## 6. Limitations and Bias 
+## 4. Data
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+The catalog contains 18 songs. Each song includes its genre, mood, energy, tempo, valence, danceability, and acousticness. The songs cover several genres and moods, but some styles have only one example. The dataset does not include information such as lyrics, language, release date, or a listener's past behavior.
 
 ---
 
-## 7. Evaluation  
+## 5. Strengths
 
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+The scoring rule is simple to understand: exact genre and mood matches earn points, and numerical features earn more points when they are closer to the user's targets. It can still recommend a song without an exact genre or mood match if its numerical features are similar. The score makes it easier to compare and rank songs consistently.
 
 ---
 
-## 8. Future Work  
+## 6. Limitations and Bias
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+The catalog is small and may not represent many genres, moods, or musical cultures. A genre or mood with few songs has less chance to appear in the recommendations. Genre and mood matches can strongly influence the score, while numerical values cannot fully describe how a song feels. The system also does not understand lyrics, personal meaning, or how a user's tastes change over time. Recommendations depend on the accuracy of the song data and the user's selected preferences.
 
 ---
 
-## 9. Personal Reflection  
+## 7. Evaluation
 
-A few sentences about your experience.  
+A basic check is to try different user profiles and confirm that exact genre and mood matches earn their points, songs closer to the numerical targets score higher, and the final list is sorted by score. The number of results should also match the requested `k` value. These checks show whether the scoring and ranking behave as intended, but they do not prove that every recommendation will fit a person's taste.
 
-Prompts:  
+---
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+## 8. Future Work
+
+The system could use a larger and more varied song catalog, include more song or user preference features, and add tests for scores and rankings. It could also explain scores more clearly and offer more variety in the final recommendations.
+
+---
+
+## 9. Personal Reflection
+
+This project shows how a recommender turns song details and user preferences into scores and a ranked list. Changing the weights can change which songs appear first. It also shows that a simple scoring rule can be easy to explain while still reflecting the limits and biases of its data.

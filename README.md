@@ -136,12 +136,43 @@ You can add more tests in `tests/test_recommender.py`.
 Add an example of your program's output after implementation:
 
 ```text
-User profile: genre=rock, mood=intense, energy=0.85
+Loaded songs: 18
+```text
+Loaded songs: 18
 
-Recommendations:
-1. ...
-2. ...
-3. ...
+Top recommendations
+========================================
+1. Sunrise City
+   Artist: Neon Echo
+   Score: 6.87 / 7.00
+   Reasons: genre match (+2.0); mood match (+1.0); energy similarity (+2.0); valence similarity (+1.0); tempo similarity (+0.9)
+
+2. Gym Hero
+   Artist: Max Pulse
+   Score: 5.52 / 7.00
+   Reasons: genre match (+2.0); mood mismatch (+0.0); energy similarity (+1.7); valence similarity (+1.0); tempo similarity (+0.8)
+
+3. Rooftop Lights
+   Artist: Indigo Parade
+   Score: 4.88 / 7.00
+   Reasons: genre mismatch (+0.0); mood match (+1.0); energy similarity (+1.9); valence similarity (+1.0); tempo similarity (+1.0)
+```
+Top recommendations
+========================================
+1. Sunrise City
+   Artist: Neon Echo
+   Score: 6.87 / 7.00
+   Reasons: genre match (+2.0); mood match (+1.0); energy similarity (+2.0); valence similarity (+1.0); tempo similarity (+0.9)
+
+2. Gym Hero
+   Artist: Max Pulse
+   Score: 5.52 / 7.00
+   Reasons: genre match (+2.0); mood mismatch (+0.0); energy similarity (+1.7); valence similarity (+1.0); tempo similarity (+0.8)
+
+3. Rooftop Lights
+   Artist: Indigo Parade
+   Score: 4.88 / 7.00
+   Reasons: genre mismatch (+0.0); mood match (+1.0); energy similarity (+1.9); valence similarity (+1.0); tempo similarity (+1.0)
 ```
 
 **Screenshot or video (optional):** Insert a screenshot or demo video link here.
