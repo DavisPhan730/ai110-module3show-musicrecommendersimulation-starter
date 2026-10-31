@@ -40,7 +40,85 @@ The scoring rule is simple to understand: exact genre and mood matches earn poin
 
 ## 6. Limitations and Bias
 
-The catalog is small and may not represent many genres, moods, or musical cultures. A genre or mood with few songs has less chance to appear in the recommendations. Genre and mood matches can strongly influence the score, while numerical values cannot fully describe how a song feels. The system also does not understand lyrics, personal meaning, or how a user's tastes change over time. Recommendations depend on the accuracy of the song data and the user's selected preferences.
+One limitation of my recommender is that the dataset only contains 18 songs, so some genres have more representation than others. For example, lofi appears three times while pop appears twice, which can make it easier for the system to find lofi matches. Another limitation is that energy is worth 4 out of the 8 possible points in the experimental scoring system, so it can have more influence than genre and mood combined. The system also does not subtract points when a song has the wrong mood or genre, which can allow songs with mismatched preferences to receive relatively high scores. Finally, danceability and acousticness are included in the dataset but are not currently used in the scoring calculations.
+
+## Evaluation
+
+### User Profiles Tested
+
+I tested my recommender using four different user profiles:
+
+1. **High-Energy Pop:** Pop, happy mood, high energy, positive valence, and fast tempo.
+2. **Chill Lofi:** Lofi, chill mood, low energy, moderate valence, and slow tempo.
+3. **Deep Intense Rock:** Rock, intense mood, high energy, moderate valence, and fast tempo.
+4. **Conflicting Preferences:** Rock, relaxed mood, high energy, low valence, and fast tempo.
+
+Each profile was tested against the same dataset of 18 songs.
+
+### Original Recommendation Results
+
+- High-Energy Pop: Sunrise City (6.40/7)
+- Chill Lofi: Library Rain (6.60/7)
+- Deep Intense Rock: Storm Runner (6.92/7)
+- Conflicting Preferences: Storm Runner (5.56/7)
+
+### Comparing User Profiles
+
+**High-Energy Pop vs. Chill Lofi:**
+
+High-Energy Pop recommended Sunrise City, while Chill Lofi recommended Library Rain. This makes sense because the first profile prefers upbeat pop music, while the second prefers slower and calmer lofi music.
+
+**High-Energy Pop vs. Deep Intense Rock:**
+
+High-Energy Pop recommended Sunrise City, while Deep Intense Rock recommended Storm Runner. Both profiles prefer high energy, but their different genre and mood preferences caused different songs to rank first.
+
+**High-Energy Pop vs. Conflicting Preferences:**
+
+Sunrise City ranked first for High-Energy Pop, while Storm Runner ranked first for Conflicting Preferences. The conflicting profile preferred rock and high energy, which helped Storm Runner score well even though its mood did not match.
+
+**Chill Lofi vs. Deep Intense Rock:**
+
+Library Rain ranked first for Chill Lofi, while Storm Runner ranked first for Deep Intense Rock. Their different energy and tempo preferences caused the system to recommend very different songs.
+
+**Chill Lofi vs. Conflicting Preferences:**
+
+Library Rain ranked first for Chill Lofi, while Storm Runner ranked first for Conflicting Preferences. The chill profile preferred low energy and slower music, while the conflicting profile preferred high energy and fast tempo.
+
+**Deep Intense Rock vs. Conflicting Preferences:**
+
+Both profiles recommended Storm Runner first. However, Deep Intense Rock gave it a score of 6.92, compared to 5.56 for Conflicting Preferences. The difference came from the conflicting profile's mood mismatch and lower valence similarity.
+
+### Weight-Shift Experiment
+
+I also tested how changing the scoring weights affected the recommendations.
+
+The original system used:
+
+- Genre: 2 points
+- Mood: 1 point
+- Energy: 2 points
+- Valence: 1 point
+- Tempo: 1 point
+- Maximum: 7 points
+
+For the experiment, I changed the weights to:
+
+- Genre: 1 point
+- Mood: 1 point
+- Energy: 4 points
+- Valence: 1 point
+- Tempo: 1 point
+- Maximum: 8 points
+
+The goal was to reduce the importance of genre and make energy similarity more influential.
+
+The results showed that Storm Runner entered the top five for High-Energy Pop, replacing Sol de Verano. For Chill Lofi, Spacewalk Thoughts moved from fourth place to third, passing Focus Flow. However, the rankings for Deep Intense Rock and Conflicting Preferences remained unchanged.
+
+This experiment showed that increasing the importance of energy can make songs from different genres rank higher when their numerical characteristics are similar. It also showed that changing scoring weights does not always change the top recommendation.
+
+### Overall Evaluation
+
+Overall, the recommender successfully produced different recommendations based on different user preferences. The experiments showed that genre, mood, energy, valence, and tempo all influence the final rankings. I also learned that changing the scoring weights can affect recommendations and that a song can still rank highly even when it does not match every user preference. Testing different profiles helped me understand the strengths and weaknesses of my recommendation system.
 
 ---
 
