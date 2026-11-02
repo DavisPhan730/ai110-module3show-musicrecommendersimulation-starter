@@ -2,138 +2,82 @@
 
 ## 1. Model Name
 
-**VibeFinder: Music Recommender Simulation**
+**VibeFinder 1.0** — a simple music recommender.
 
----
+## 2. Goal / Task
 
-## 2. Intended Use
+My recommender suggests songs that match a user's music preferences. It compares a user's favorite genre and mood with the features of each song. It also checks how close a song's energy, valence, and tempo are to the user's targets. The goal is to give users a ranked list of songs they might like, with explanations for the scores.
 
-This recommender suggests songs from a small catalog using a user's music preferences. It is designed for classroom exploration, not as a complete music service. It assumes that the selected preferences and song details describe what the user likes.
+## 3. Data Used
 
----
+The project uses a CSV catalog of **18 songs**, expanded from the original 10. Each song has an ID, title, artist, genre, mood, energy, tempo, valence, danceability, and acousticness. The scoring system currently uses genre, mood, energy, tempo, and valence. It does not use danceability or acousticness in the score.
 
-## 3. How the Model Works
+The catalog is small, and some genres have more examples than others. It also has no listening history, skips, likes, or feedback from real users. Because of this, the system cannot know whether someone will actually enjoy a recommendation.
 
-The system uses **content-based filtering**. It compares each song's features with a user's preferences and gives the song a score out of 7:
+## 4. Algorithm Summary
 
-- Genre match: up to 2 points for an exact match.
-- Mood match: up to 1 point for an exact match.
-- Energy similarity: up to 2 points. Songs with energy closer to the user's target receive more points.
-- Valence similarity: up to 1 point. Songs with valence closer to the user's target receive more points.
-- Tempo similarity: up to 1 point. Songs closer to the user's target tempo receive more points, using a 60 BPM tolerance.
+The system uses **content-based filtering**. It scores every song based on how well its features match the user's preferences.
 
-The system sorts songs from highest score to lowest and returns the top three by default. The program can request a different number with `k`; for example, the current command-line example requests five recommendations.
+The final scoring rules are:
 
----
+- Genre match: up to **2 points**.
+- Mood match: up to **1 point**.
+- Energy similarity: up to **2 points**.
+- Valence similarity: up to **1 point**.
+- Tempo similarity: up to **1 point**.
 
-## 4. Data
+The maximum score is **7 points**. Genre and mood earn points for exact matches. Energy and valence earn more points when the song's values are closer to the user's targets. Tempo is compared using a 60 BPM tolerance. The recommender scores all 18 songs, sorts them from highest to lowest, and returns the requested number of results. The regular demonstration recommends the top three, while my evaluation tested the top five for each profile.
 
-The catalog contains 18 songs. Each song includes its genre, mood, energy, tempo, valence, danceability, and acousticness. The songs cover several genres and moods, but some styles have only one example. The dataset does not include information such as lyrics, language, release date, or a listener's past behavior.
+The output also explains each score so a user can see why a song ranked where it did.
 
----
+## 5. Observed Behavior / Biases
 
-## 5. Strengths
+The system worked well for clear preferences. For example, it recommended *Sunrise City* for High-Energy Pop and *Library Rain* for Chill Lofi. But it can recommend a song even when its genre or mood does not match, because the numerical features still earn points.
 
-The scoring rule is simple to understand: exact genre and mood matches earn points, and numerical features earn more points when they are closer to the user's targets. It can still recommend a song without an exact genre or mood match if its numerical features are similar. The score makes it easier to compare and rank songs consistently.
+The small dataset may favor genres with more songs, such as lofi, which has three examples. The system also gives no partial credit to related genres or moods. Finally, it does not understand lyrics or the personal meaning of a song. These limits mean a high score is not a guarantee that a listener will like the music.
 
----
+## 6. Evaluation Process
 
-## 6. Limitations and Bias
+I tested four user profiles against all 18 songs and reviewed the top five results for each one:
 
-One limitation of my recommender is that the dataset only contains 18 songs, so some genres have more representation than others. For example, lofi appears three times while pop appears twice, which can make it easier for the system to find lofi matches. Another limitation is that energy is worth 4 out of the 8 possible points in the experimental scoring system, so it can have more influence than genre and mood combined. The system also does not subtract points when a song has the wrong mood or genre, which can allow songs with mismatched preferences to receive relatively high scores. Finally, danceability and acousticness are included in the dataset but are not currently used in the scoring calculations.
+| Profile | First recommendation | Original score |
+|---|---|---|
+| High-Energy Pop | Sunrise City | 6.40 / 7 |
+| Chill Lofi | Library Rain | 6.60 / 7 |
+| Deep Intense Rock | Storm Runner | 6.92 / 7 |
+| Conflicting Preferences | Storm Runner | 5.56 / 7 |
 
-## Evaluation
+### Comparing the Profiles
 
-### User Profiles Tested
-
-I tested my recommender using four different user profiles:
-
-1. **High-Energy Pop:** Pop, happy mood, high energy, positive valence, and fast tempo.
-2. **Chill Lofi:** Lofi, chill mood, low energy, moderate valence, and slow tempo.
-3. **Deep Intense Rock:** Rock, intense mood, high energy, moderate valence, and fast tempo.
-4. **Conflicting Preferences:** Rock, relaxed mood, high energy, low valence, and fast tempo.
-
-Each profile was tested against the same dataset of 18 songs.
-
-### Original Recommendation Results
-
-- High-Energy Pop: Sunrise City (6.40/7)
-- Chill Lofi: Library Rain (6.60/7)
-- Deep Intense Rock: Storm Runner (6.92/7)
-- Conflicting Preferences: Storm Runner (5.56/7)
-
-### Comparing User Profiles
-
-**High-Energy Pop vs. Chill Lofi:**
-
-High-Energy Pop recommended Sunrise City, while Chill Lofi recommended Library Rain. This makes sense because the first profile prefers upbeat pop music, while the second prefers slower and calmer lofi music.
-
-**High-Energy Pop vs. Deep Intense Rock:**
-
-High-Energy Pop recommended Sunrise City, while Deep Intense Rock recommended Storm Runner. Both profiles prefer high energy, but their different genre and mood preferences caused different songs to rank first.
-
-**High-Energy Pop vs. Conflicting Preferences:**
-
-Sunrise City ranked first for High-Energy Pop, while Storm Runner ranked first for Conflicting Preferences. The conflicting profile preferred rock and high energy, which helped Storm Runner score well even though its mood did not match.
-
-**Chill Lofi vs. Deep Intense Rock:**
-
-Library Rain ranked first for Chill Lofi, while Storm Runner ranked first for Deep Intense Rock. Their different energy and tempo preferences caused the system to recommend very different songs.
-
-**Chill Lofi vs. Conflicting Preferences:**
-
-Library Rain ranked first for Chill Lofi, while Storm Runner ranked first for Conflicting Preferences. The chill profile preferred low energy and slower music, while the conflicting profile preferred high energy and fast tempo.
-
-**Deep Intense Rock vs. Conflicting Preferences:**
-
-Both profiles recommended Storm Runner first. However, Deep Intense Rock gave it a score of 6.92, compared to 5.56 for Conflicting Preferences. The difference came from the conflicting profile's mood mismatch and lower valence similarity.
+- **High-Energy Pop vs. Chill Lofi:** Sunrise City was first for pop, while Library Rain was first for lofi. The different energy, tempo, genre, and mood preferences explain the difference.
+- **High-Energy Pop vs. Deep Intense Rock:** Both profiles prefer energetic music, but different genres and moods caused Sunrise City and Storm Runner to win.
+- **High-Energy Pop vs. Conflicting Preferences:** Sunrise City fits the pop/happy profile, while Storm Runner matches the conflicting profile's rock and high-energy preferences.
+- **Chill Lofi vs. Deep Intense Rock:** Library Rain fits calm, slower music, while Storm Runner fits intense, fast music.
+- **Chill Lofi vs. Conflicting Preferences:** The low-energy lofi profile and the fast, high-energy conflicting profile produced very different recommendations.
+- **Deep Intense Rock vs. Conflicting Preferences:** Storm Runner ranked first for both, but it scored lower for Conflicting Preferences because the requested relaxed mood did not match.
 
 ### Weight-Shift Experiment
 
-I also tested how changing the scoring weights affected the recommendations.
+I also tested what would happen if I changed the weights. I reduced genre from **2 to 1 point** and increased energy from **2 to 4 points**, changing the maximum score from **7 to 8**. Mood, valence, and tempo stayed at 1 point each.
 
-The original system used:
+The first-place song stayed the same for all four profiles. However, *Storm Runner* entered the top five for High-Energy Pop, replacing *Sol de Verano*. For Chill Lofi, *Spacewalk Thoughts* moved ahead of *Focus Flow*. This showed me that changing the weights can change the rankings, even when the top song stays the same.
 
-- Genre: 2 points
-- Mood: 1 point
-- Energy: 2 points
-- Valence: 1 point
-- Tempo: 1 point
-- Maximum: 7 points
+I restored the original **7-point system** after the experiment. The terminal output for the different profiles and the experiment is documented in `README.md`.
 
-For the experiment, I changed the weights to:
+## 7. Intended Use and Non-Intended Use
 
-- Genre: 1 point
-- Mood: 1 point
-- Energy: 4 points
-- Valence: 1 point
-- Tempo: 1 point
-- Maximum: 8 points
+**Intended use:** This system is a classroom project for learning how content-based recommendations work. It can show how changing user preferences and scoring weights affects song rankings. It is also useful for practicing Python, testing, and explaining program output.
 
-The goal was to reduce the importance of genre and make energy similarity more influential.
+**Non-intended use:** It should not be treated as a full replacement for Spotify or another music service. It should not be used to predict someone's real music taste with confidence or make important decisions about artists or listeners. It has too few songs and no real listening feedback for that.
 
-The results showed that Storm Runner entered the top five for High-Energy Pop, replacing Sol de Verano. For Chill Lofi, Spacewalk Thoughts moved from fourth place to third, passing Focus Flow. However, the rankings for Deep Intense Rock and Conflicting Preferences remained unchanged.
+## 8. Ideas for Improvement
 
-This experiment showed that increasing the importance of energy can make songs from different genres rank higher when their numerical characteristics are similar. It also showed that changing scoring weights does not always change the top recommendation.
-
-### Overall Evaluation
-
-Overall, the recommender successfully produced different recommendations based on different user preferences. The experiments showed that genre, mood, energy, valence, and tempo all influence the final rankings. I also learned that changing the scoring weights can affect recommendations and that a song can still rank highly even when it does not match every user preference. Testing different profiles helped me understand the strengths and weaknesses of my recommendation system.
-
----
-
-## 7. Evaluation
-
-A basic check is to try different user profiles and confirm that exact genre and mood matches earn their points, songs closer to the numerical targets score higher, and the final list is sorted by score. The number of results should also match the requested `k` value. These checks show whether the scoring and ranking behave as intended, but they do not prove that every recommendation will fit a person's taste.
-
----
-
-## 8. Future Work
-
-The system could use a larger and more varied song catalog, include more song or user preference features, and add tests for scores and rankings. It could also explain scores more clearly and offer more variety in the final recommendations.
-
----
+1. Add more songs across a wider variety of genres and moods so the recommendations are less limited.
+2. Let related genres and moods earn partial credit, and give users more control over which features matter most.
+3. Use danceability, acousticness, and real user feedback to make recommendations more personal.
 
 ## 9. Personal Reflection
 
-This project shows how a recommender turns song details and user preferences into scores and a ranked list. Changing the weights can change which songs appear first. It also shows that a simple scoring rule can be easy to explain while still reflecting the limits and biases of its data.
+My biggest learning moment was seeing how much the scoring weights affected the recommendations. I thought genre would be the most important part of music recommendations, but changing the energy weight showed me that songs from different genres can still have similar vibes. I was also surprised that such a simple scoring system could produce recommendations that made sense for different users.
+
+GitHub Copilot helped me understand the CSV loading, scoring, ranking, and testing steps. It was useful for explaining code and suggesting changes, but I still had to check the results myself. For example, I had to fix import and folder issues when running the program, and I caught an incorrect explanation about how close two song scores were. This taught me not to assume an AI explanation is right just because it sounds confident. If I kept developing the project, I would add more songs, collect user feedback, and test different scoring approaches to see which recommendations people actually enjoy.
